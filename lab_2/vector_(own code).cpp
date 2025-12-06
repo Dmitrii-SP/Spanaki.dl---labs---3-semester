@@ -5,6 +5,7 @@
 // ваш код здесь
 template <typename T>
 class subvector {
+// public поля в классе с инвариантами?
 public:
     T* mas;
     int top;
@@ -17,11 +18,14 @@ public:
     }
 
     ~subvector() {
+        // delete[] nullptr -- это корректная операция, не нужно проверять перед удалением
         if (mas != nullptr) delete[] mas;
     }
 
     void push_back(T item) {
         if (top == capacity) {
+            // тот же самый код, что и в resize. нужно здесь его переиспользовать, чтобы не плодить
+            // ошибки типа "тут исправил -- там забыл"
             int new_capacity = (capacity == 0) ? 1 : capacity * 2;
             T* new_mas = new T[new_capacity];
 
@@ -42,6 +46,8 @@ public:
         return T{};
     }
 
+// resize должен изменять capacity (емкость вектора) в нашем случае
+// пока что в функции происходит не это. посмотри внимательно интерфейс
     void resize(int new_top) {
         if (new_top > capacity) {
             T* new_mas = new T[new_top];
@@ -57,6 +63,8 @@ public:
         top = new_top;
     }
 
+// В задании было: "очистить неиспользуемую память, переехав на новое место с уменьшением capacity до top"
+// Тут происходит фактически деструктор.
     void shrink_to_fit() {
         if (mas != nullptr) delete[] mas;
         mas = nullptr;
@@ -83,3 +91,5 @@ public:
         return *this;
     }
 };
+
+// Неот конструктора копирования, мув операций
